@@ -1,0 +1,26 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; worker-src 'self' blob:; font-src 'self' data:; img-src 'self' data:">
+  <title>Dev Toolbox</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <nav id="sidebar">
+    <div class="brand">Dev Toolbox</div>
+    <ul id="tool-list"></ul>
+  </nav>
+  <main id="tool-host">
+    <div class="loading">Loading editor…</div>
+  </main>
+  <div id="toast" role="status"></div>
+
+  <script src="../../node_modules/monaco-editor/min/vs/loader.js"></script>
+  <script src="app.js"></script>
+  <!-- Tools: each file calls Toolbox.register({...}). Add new tools here. -->
+  <script src="tools/diff.js"></script>
+  <script src="tools/encoding.js"></script>
+  <script src="boot.js"></script>
+</body>
+</html>

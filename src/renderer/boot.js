@@ -1,0 +1,9 @@
+'use strict';
+
+// Load Monaco (AMD build), then start the toolbox.
+require.config({ paths: { vs: '../../node_modules/monaco-editor/min/vs' } });
+require(['vs/editor/editor.main'], () => Toolbox.start(window.monaco));
+
+// Dropping a file anywhere outside a drop zone must not navigate the window away.
+window.addEventListener('dragover', (e) => e.preventDefault());
+window.addEventListener('drop', (e) => e.preventDefault());
