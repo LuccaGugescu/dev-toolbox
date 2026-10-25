@@ -4,13 +4,59 @@
   "description": "Windows desktop toolbox: diff checker, encoding checker, and more.",
   "main": "main.js",
   "private": true,
+  "author": "Lucca Gugescu",
   "scripts": {
     "start": "electron .",
-    "test": "node test/encoding.test.js"
+    "test": "node test/encoding.test.js",
+    "icon": "python scripts/make-icon.py",
+    "dist": "electron-builder --win nsis --x64",
+    "pack": "electron-builder --win dir --x64"
   },
   "license": "UNLICENSED",
+  "build": {
+    "appId": "com.luccagugescu.devtoolbox",
+    "productName": "Dev Toolbox",
+    "directories": {
+      "output": "dist",
+      "buildResources": "build"
+    },
+    "files": [
+      "package.json",
+      "main.js",
+      "preload.js",
+      "src/**",
+      "build/icon.png",
+      "!node_modules/monaco-editor/{dev,esm,min-maps}/**",
+      "!**/*.map",
+      "!**/*.d.ts"
+    ],
+    "win": {
+      "target": [
+        {
+          "target": "nsis",
+          "arch": [
+            "x64"
+          ]
+        }
+      ],
+      "icon": "build/icon.ico"
+    },
+    "nsis": {
+      "oneClick": false,
+      "perMachine": false,
+      "allowElevation": true,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true,
+      "shortcutName": "Dev Toolbox",
+      "uninstallDisplayName": "Dev Toolbox",
+      "artifactName": "DevToolbox-Setup-${version}.exe",
+      "deleteAppDataOnUninstall": true
+    }
+  },
   "devDependencies": {
-    "electron": "^33.4.11"
+    "electron": "^33.4.11",
+    "electron-builder": "^25.1.8"
   },
   "dependencies": {
     "monaco-editor": "^0.52.2"

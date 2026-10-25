@@ -23,6 +23,7 @@ function createWindow() {
     title: 'Dev Toolbox',
     backgroundColor: '#1e1e1e',
     autoHideMenuBar: true,
+    icon: path.join(__dirname, 'build', 'icon.png'),
     webPreferences: {
       preload: path.join(__dirname, 'preload.js'),
       contextIsolation: true,
@@ -153,6 +154,18 @@ function registerIpc() {
     return res.filePath;
   });
 }
+
+// Must match build.appId so the taskbar groups the window with its installed shortcut.
+app.setAppUserModelId('com.luccagugescu.devtoolbox');
+
+// A second launch focuses the existing window instead of opening another app instance.
+if (!app.requestSingleInstanceLock()) app.quit();
+app.on('second-instance', () => {
+  const win = BrowserWindow.getAllWindows()[0];
+  if (!win) return;
+  if (win.isMinimized()) win.restore();
+  win.focus();
+});
 
 app.whenReady().then(() => {
   protocol.handle('app', (req) => {

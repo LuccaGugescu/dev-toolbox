@@ -11,6 +11,24 @@ npm start
 
 `npm test` runs the encoding engine tests. `node test/make-samples.js` writes demo files to `samples/`.
 
+## Windows installer
+
+```
+npm run dist
+```
+
+Produces `dist/DevToolbox-Setup-<version>.exe` (NSIS): per-user install by default (no admin needed),
+choice of install folder, Start Menu + desktop shortcuts, uninstaller in *Apps & features*.
+`npm run pack` builds only the unpacked app in `dist/win-unpacked/` (faster, for testing).
+
+- **Path length:** NSIS cannot read files whose full path exceeds 260 characters. Build from a short
+  folder such as `C:\projects\dev-toolbox`.
+- **Releases:** push a tag (`git tag v0.2.0 && git push --tags`, after bumping `version` in
+  `package.json`) and GitHub Actions builds the installer and attaches it to a GitHub Release.
+- **Icon:** `build/icon.ico` / `build/icon.png`, regenerated with `npm run icon` (needs Python + Pillow).
+- **Unsigned:** the installer is not code-signed, so Windows SmartScreen shows "Windows protected your PC"
+  the first time. Click *More info → Run anyway*. A code-signing certificate removes this.
+
 ## Tools
 
 ### Diff Checker
