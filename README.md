@@ -56,9 +56,36 @@ replacement). **Save converted copy…** writes a new file (never overwrites in 
 `\uXXXX` for unmappable chars, or pure ASCII with `\uXXXX` escapes — optionally repairing double-encoding and
 removing invisible chars.
 
+### JSON / XML Formatter
+Live format / minify with 2, 4 or tab indent, optional key sorting, error line:column marked in the editor.
+Large integers (64-bit ids such as `9007199254740993`) are kept exactly instead of being rounded.
+
+### Encode / Decode
+Base64, Base64URL, URL, HTML entities, hex, Java `\uXXXX` escapes and JSON string escaping, always via UTF-8.
+Binary results (not valid UTF-8) are shown as a hex dump. *Swap* feeds the output back in reversed.
+
+### JWT Decoder
+Header, payload and claims (`exp`/`iat`/`nbf` as dates with "expires in …"), expired tokens flagged.
+Verifies signatures for HS256/384/512 (secret, plain or Base64), RS*, PS* and ES* (public key PEM or JWK).
+Everything runs locally.
+
+### Hash Generator
+MD5, SHA-1, SHA-224, SHA-256, SHA-384, SHA-512 of text (UTF-8) or a file (streamed, any size), optional HMAC
+key, hex / HEX / Base64 output, and a compare box that tells you which digest matches.
+
+### Timestamp Converter
+Paste Unix seconds, ms, µs or ns (unit detected by size), ISO-8601, SQL datetime or an HTTP date. Shows Instant,
+OffsetDateTime, ZonedDateTime, SQL timestamp, RFC 1123, relative time and ISO week in any time zone.
+
+### Regex Tester
+Live match highlighting, numbered and named groups, replace preview, and ready-to-paste Java
+`Pattern.compile(...)` / `replaceAll(...)` code with escaped backslashes and flags.
+
 ## Adding a tool
 
-Create `src/renderer/tools/<name>.js`, add a `<script>` tag in `src/renderer/index.html`:
+Create `src/renderer/tools/<name>.js`, add a `<script>` tag in `src/renderer/index.html`. Wrap the file in
+`(() => { ... })();` so its top-level names don't collide with other tools. Shared helpers live on `Toolbox`
+(`h`, `pane`, `createEditor`, `copy`, `copyButton`, `debounce`, `relativeTime`, `toast`).
 
 ```js
 Toolbox.register({

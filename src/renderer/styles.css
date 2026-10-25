@@ -242,6 +242,86 @@ select:focus, input:focus, button:focus-visible { outline: 2px solid var(--accen
 .empty h2 { margin: 0; color: var(--fg); font-weight: 600; font-size: 16px; }
 .empty ul { text-align: left; margin: 4px 0 0; padding-left: 18px; line-height: 1.6; }
 
+/* ---------- Shared tool layout ---------- */
+.split { flex: 1; min-height: 0; display: grid; grid-template-columns: 1fr 1fr; }
+.split.wide-right { grid-template-columns: minmax(320px, 2fr) 3fr; }
+.pane { display: flex; flex-direction: column; min-width: 0; min-height: 0; }
+.pane + .pane { border-left: 1px solid var(--border); }
+.pane-head {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 12px;
+  min-height: 41px;
+  border-bottom: 1px solid var(--border);
+  flex-wrap: wrap;
+}
+.pane-title { font-weight: 600; }
+.pane-body { flex: 1; min-height: 0; position: relative; overflow: auto; }
+.pane-body.editor { overflow: hidden; }
+.grow { flex: 1; }
+.stack { display: flex; flex-direction: column; min-height: 0; }
+.section { padding: 10px 12px; border-bottom: 1px solid var(--border); }
+.section h3 { margin: 0 0 8px; font-size: 12px; text-transform: uppercase; letter-spacing: 0.5px; color: var(--fg-muted); font-weight: 600; display: flex; align-items: center; gap: 8px; }
+
+textarea.code, input.code, pre.code {
+  font-family: "Cascadia Code", Consolas, monospace;
+  font-size: 13px;
+}
+textarea.code {
+  display: block;
+  width: 100%;
+  height: 100%;
+  resize: none;
+  border: none;
+  outline: none;
+  padding: 10px 12px;
+  background: var(--bg);
+  color: var(--fg);
+  tab-size: 4;
+}
+textarea.code.boxed { height: auto; border: 1px solid var(--border); border-radius: 4px; padding: 6px 8px; resize: vertical; }
+pre.code { margin: 0; white-space: pre-wrap; word-break: break-all; }
+input.code { width: 100%; }
+
+.status { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 60%; }
+.status.ok { color: var(--ok); }
+.status.err { color: var(--err); }
+.status.warn { color: var(--warn); }
+
+.segmented { display: inline-flex; }
+.segmented button { border-radius: 0; margin-left: -1px; }
+.segmented button:first-child { border-radius: 4px 0 0 4px; margin-left: 0; }
+.segmented button:last-child { border-radius: 0 4px 4px 0; }
+.segmented button.on { background: var(--accent); color: var(--accent-fg); border-color: var(--accent); position: relative; }
+
+.kv { display: grid; grid-template-columns: minmax(120px, max-content) 1fr auto; align-items: center; }
+.kv > * { padding: 6px 12px; border-bottom: 1px solid var(--border); min-width: 0; }
+.kv .k { color: var(--fg-muted); white-space: nowrap; }
+.kv .v { font-family: "Cascadia Code", Consolas, monospace; word-break: break-all; user-select: text; }
+.kv .v.match { color: var(--ok); font-weight: 600; }
+.kv button { height: 24px; padding: 0 8px; font-size: 12px; }
+.kv .hint { grid-column: 1 / -1; color: var(--fg-muted); font-size: 12px; }
+
+/* JWT */
+.jwt-parts { padding: 10px 12px; font-family: "Cascadia Code", Consolas, monospace; word-break: break-all; line-height: 1.5; }
+.jwt-h { color: #e5534b; }
+.jwt-p { color: #b083f0; }
+.jwt-s { color: #39a0ed; }
+.claim-bad { color: var(--err); font-weight: 600; }
+.claim-good { color: var(--ok); }
+
+/* Regex */
+.regex-bar { display: flex; align-items: center; gap: 8px; flex: 1; min-width: 320px; }
+.regex-bar .slash { font-family: Consolas, monospace; color: var(--fg-muted); font-size: 16px; }
+.regex-bar input.code { flex: 1; }
+.regex-m0 { background: rgba(55, 148, 255, 0.35); border-radius: 2px; }
+.regex-m1 { background: rgba(63, 185, 80, 0.35); border-radius: 2px; }
+.match-row { padding: 6px 12px; border-bottom: 1px solid var(--border); cursor: pointer; font-family: "Cascadia Code", Consolas, monospace; font-size: 12px; }
+.match-row:hover { background: var(--bg-2); }
+.match-row .idx { color: var(--fg-muted); margin-right: 8px; }
+.match-row .grp { color: var(--fg-muted); margin-left: 16px; display: block; }
+
 /* Monaco decorations for encoding problems */
 .enc-mark-error { background: var(--err-bg); outline: 1px solid var(--err); border-radius: 2px; }
 .enc-mark-warning { background: var(--warn-bg); outline: 1px dashed var(--warn); border-radius: 2px; }

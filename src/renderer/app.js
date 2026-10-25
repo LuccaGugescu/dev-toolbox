@@ -104,5 +104,60 @@ window.Toolbox = (() => {
     return el;
   }
 
-  return { register, start, show, openIn, toast, languageForFile, h, get monaco() { return monaco; } };
+  async function copy(text) {
+    try {
+      await navigator.clipboard.writeText(text);
+      toast('Copied to clipboard');
+    } catch {
+      toast('Could not copy to clipboard', 'error');
+    }
+  }
+
+  function copyButton(getText, label = 'Copy') {
+    return h('button', { title: 'Copy to clipboard', onclick: () => copy(getText()) }, label);
+  }
+
+  function debounce(fn, ms = 150) {
+    let t;
+    return (...args) => {
+      clearTimeout(t);
+      t = setTimeout(() => fn(...args), ms);
+    };
+  }
+
+  /** Monaco editor with the toolbox's default look. */
+  function createEditor(host, options = {}) {
+    return monaco.editor.create(host, {
+      automaticLayout: true,
+      fontFamily: 'Cascadia Code, Consolas, monospace',
+      fontSize: 13,
+      scrollBeyondLastLine: false,
+      minimap: { enabled: false },
+      ...options,
+    });
+  }
+
+  /** Titled panel: h('div.pane') with a header row and a body that fills the rest. */
+  function pane(title, headExtras = [], body = h('div.pane-body')) {
+    return { el: h('div.pane', {}, h('div.pane-head', {}, h('span.pane-title', {}, title), h('span.grow'), headExtras), body), body };
+  }
+
+  /** "3 hours ago" / "in 2 days". */
+  function relativeTime(ms, now = Date.now()) {
+    const diff = ms - now;
+    const abs = Math.abs(diff);
+    const units = [['year', 31536e6], ['month', 2592e6], ['day', 864e5], ['hour', 36e5], ['minute', 6e4], ['second', 1e3]];
+    const [unit, size] = units.find(([, s]) => abs >= s) || units[units.length - 1];
+    return new Intl.RelativeTimeFormat('en', { numeric: 'auto' }).format(Math.round(diff / size), unit);
+  }
+
+  function errorMessage(err) {
+    return String(err?.message || err).replace(/^Error invoking remote method '[^']+': (Error: )?/, '');
+  }
+
+  return {
+    register, start, show, openIn, toast, languageForFile, h,
+    copy, copyButton, debounce, createEditor, pane, relativeTime, errorMessage,
+    get monaco() { return monaco; },
+  };
 })();

@@ -4,6 +4,8 @@ const { app, BrowserWindow, ipcMain, dialog, protocol, net, Menu, shell } = requ
 const path = require('node:path');
 const fs = require('node:fs/promises');
 const { pathToFileURL } = require('node:url');
+const crypto = require('node:crypto');
+const { createReadStream } = require('node:fs');
 const encoding = require('./src/core/encoding');
 
 // Serve the app from app://local/ instead of file:// so Monaco's web workers are allowed.
@@ -85,7 +87,29 @@ async function summarizeFile(file, root, opts) {
   }
 }
 
+// Electron's Node is built on BoringSSL, which has no SHA-3.
+const HASH_ALGORITHMS = ['md5', 'sha1', 'sha224', 'sha256', 'sha384', 'sha512'];
+
+/** Hex digests of text (UTF-8) or a file, for every algorithm; HMAC when a key is given. */
+async function computeHashes({ text, path: filePath, hmacKey }) {
+  const hashers = HASH_ALGORITHMS.map((alg) => (hmacKey ? crypto.createHmac(alg, hmacKey) : crypto.createHash(alg)));
+  let size;
+  if (filePath != null) {
+    for await (const chunk of createReadStream(filePath, { highWaterMark: 1024 * 1024 })) {
+      for (const hsh of hashers) hsh.update(chunk);
+    }
+    size = (await fs.stat(filePath)).size;
+  } else {
+    const buf = Buffer.from(text ?? '', 'utf8');
+    for (const hsh of hashers) hsh.update(buf);
+    size = buf.length;
+  }
+  return { size, digests: Object.fromEntries(HASH_ALGORITHMS.map((alg, i) => [alg, hashers[i].digest('hex')])) };
+}
+
 function registerIpc() {
+  ipcMain.handle('hash:compute', (_e, opts) => computeHashes(opts));
+
   ipcMain.handle('dialog:open-file', async (e, { title, multi } = {}) => {
     const res = await dialog.showOpenDialog(BrowserWindow.fromWebContents(e.sender), {
       title,
