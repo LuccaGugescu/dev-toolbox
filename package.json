@@ -9,7 +9,7 @@
     "start": "electron .",
     "test": "node test/encoding.test.js",
     "icon": "python scripts/make-icon.py",
-    "dist": "electron-builder --win nsis --x64",
+    "dist": "electron-builder --win nsis --x64 --publish never",
     "pack": "electron-builder --win dir --x64"
   },
   "license": "UNLICENSED",
