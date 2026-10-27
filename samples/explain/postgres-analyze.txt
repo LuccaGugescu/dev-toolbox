@@ -1,0 +1,18 @@
+                                                        QUERY PLAN
+--------------------------------------------------------------------------------------------------------------------------
+ Sort  (cost=1250.10..1252.60 rows=1000 width=40) (actual time=95.123..98.456 rows=50000 loops=1)
+   Sort Key: o.created_at DESC
+   Sort Method: external merge  Disk: 4096kB
+   Buffers: shared hit=120 read=15000, temp read=500 written=512
+   ->  Hash Join  (cost=30.00..1200.00 rows=1000 width=40) (actual time=1.200..80.000 rows=50000 loops=1)
+         Hash Cond: (o.customer_id = c.id)
+         ->  Seq Scan on orders o  (cost=0.00..1100.00 rows=1000 width=32) (actual time=0.010..60.000 rows=50000 loops=1)
+               Filter: (status = 'NEW'::text)
+               Rows Removed by Filter: 450000
+         ->  Hash  (cost=20.00..20.00 rows=800 width=12) (actual time=1.000..1.000 rows=800 loops=1)
+               Buckets: 1024  Batches: 1  Memory Usage: 45kB
+               ->  Index Scan using customers_pkey on customers c  (cost=0.28..20.00 rows=800 width=12) (actual time=0.010..0.500 rows=800 loops=1)
+                     Index Cond: (id > 0)
+ Planning Time: 0.250 ms
+ Execution Time: 99.100 ms
+(15 rows)

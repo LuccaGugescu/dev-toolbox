@@ -73,7 +73,16 @@ select:focus, input:focus, button:focus-visible { outline: 2px solid var(--accen
   flex-direction: column;
 }
 #sidebar .brand { padding: 14px 16px 10px; font-weight: 600; font-size: 14px; letter-spacing: 0.2px; }
-#tool-list { list-style: none; margin: 0; padding: 4px 8px; display: flex; flex-direction: column; gap: 2px; }
+#tool-list { list-style: none; margin: 0; padding: 4px 8px 12px; display: flex; flex-direction: column; gap: 2px; overflow-y: auto; flex: 1; min-height: 0; }
+#tool-list .group-label {
+  padding: 10px 10px 4px;
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
+  color: var(--fg-muted);
+}
+#tool-list .group-label:first-child { padding-top: 2px; }
 #tool-list button {
   width: 100%;
   display: flex;
@@ -327,3 +336,77 @@ input.code { width: 100%; }
 .enc-mark-warning { background: var(--warn-bg); outline: 1px dashed var(--warn); border-radius: 2px; }
 .enc-glyph-error::before { content: "●"; color: var(--err); font-size: 10px; margin-left: 4px; }
 .enc-glyph-warning::before { content: "●"; color: var(--warn); font-size: 10px; margin-left: 4px; }
+
+/* ---------- Database / backend tools ---------- */
+.chips-bar { display: flex; gap: 6px; flex-wrap: wrap; align-items: center; padding: 6px 12px; border-bottom: 1px solid var(--border); }
+.chip:disabled { opacity: 1; cursor: default; }
+
+/* EXPLAIN analyzer */
+.ex-stats { display: flex; flex-wrap: wrap; gap: 8px 24px; padding: 10px 12px; }
+.ex-stat { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.ex-stat b { font-size: 15px; font-weight: 600; }
+.ex-findings { border-top: 1px solid var(--border); }
+.ex-finding { display: flex; gap: 8px; align-items: flex-start; padding: 6px 12px; border-bottom: 1px solid var(--border); cursor: pointer; line-height: 1.45; }
+.ex-finding:hover { background: var(--bg-2); }
+.ex-finding.ok { cursor: default; color: var(--ok); }
+.ex-dot { flex: none; width: 8px; height: 8px; border-radius: 50%; margin-top: 6px; background: var(--fg-muted); }
+.ex-finding.bad .ex-dot { background: var(--err); }
+.ex-finding.warn .ex-dot { background: var(--warn); }
+.ex-tree { font-size: 12px; }
+.ex-row {
+  display: grid;
+  grid-template-columns: minmax(180px, 1fr) 130px 160px 48px 72px;
+  gap: 8px;
+  align-items: center;
+  padding: 5px 12px;
+  border-bottom: 1px solid var(--border);
+  cursor: pointer;
+}
+.ex-row:hover { background: var(--bg-2); }
+.ex-row.ex-head { cursor: default; color: var(--fg-muted); font-weight: 600; position: sticky; top: 0; background: var(--bg); z-index: 1; }
+.ex-row.bad { box-shadow: inset 3px 0 0 var(--err); }
+.ex-row.warn { box-shadow: inset 3px 0 0 var(--warn); }
+.ex-row.flash { background: var(--warn-bg); }
+.ex-row .num { text-align: right; font-family: "Cascadia Code", Consolas, monospace; white-space: nowrap; }
+.ex-name { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.ex-bar { display: inline-block; padding: 0 4px; border-radius: 3px; background: linear-gradient(90deg, var(--err-bg) var(--w), transparent var(--w)); min-width: 100%; }
+.ex-details { padding: 4px 0 8px; border-bottom: 1px solid var(--border); background: var(--bg-2); }
+
+/* Oracle <-> PostgreSQL */
+.conv-warnings { max-height: 40%; overflow: auto; border-top: 1px solid var(--border); }
+.conv-warnings:empty { display: none; }
+.conv-warnings h3 { margin: 8px 12px 4px; font-size: 12px; text-transform: uppercase; letter-spacing: 0.5px; color: var(--warn); }
+.conv-warning { display: flex; gap: 8px; padding: 5px 12px; line-height: 1.45; }
+.conv-warning .ex-dot { background: var(--warn); }
+
+/* Connection strings */
+.form { padding: 12px; display: flex; flex-direction: column; gap: 8px; }
+.form-row { display: grid; grid-template-columns: 110px 1fr; align-items: center; gap: 8px; }
+.form-row input, .form-row select { width: 100%; }
+.conn-outputs { padding-bottom: 12px; }
+.conn-group { margin: 14px 12px 6px; font-size: 12px; text-transform: uppercase; letter-spacing: 0.5px; color: var(--fg-muted); }
+.conn-item { margin: 0 12px 8px; border: 1px solid var(--border); border-radius: 6px; overflow: hidden; }
+.conn-head { display: flex; align-items: center; gap: 8px; padding: 4px 4px 4px 10px; background: var(--bg-2); border-bottom: 1px solid var(--border); font-weight: 600; font-size: 12px; }
+.conn-head button { height: 24px; padding: 0 8px; font-size: 12px; }
+.conn-item pre.code { padding: 8px 10px; font-size: 12px; user-select: text; }
+
+/* Cron */
+input.cron-input { font-size: 18px; height: 40px; padding: 4px 10px; }
+.cron-desc { margin-top: 10px; font-size: 15px; line-height: 1.4; min-height: 21px; }
+.cron-legend { border-bottom: 1px solid var(--border); }
+.cron-fields { display: flex; flex-wrap: wrap; gap: 6px; padding: 10px 12px; }
+.cron-field { display: flex; flex-direction: column; align-items: center; gap: 2px; padding: 4px 10px; border: 1px solid var(--border); border-radius: 6px; font-size: 11px; }
+.cron-field code { font-size: 14px; font-family: "Cascadia Code", Consolas, monospace; }
+.cron-runs { padding: 4px 0; border-bottom: 1px solid var(--border); }
+.cron-run { display: flex; justify-content: space-between; gap: 12px; padding: 4px 12px; font-family: "Cascadia Code", Consolas, monospace; font-size: 12px; }
+.cron-run:first-child { font-weight: 600; }
+
+/* DB errors */
+.err-results { padding: 12px; display: flex; flex-direction: column; gap: 10px; }
+.err-card { border: 1px solid var(--border); border-radius: 6px; padding: 10px 12px; line-height: 1.5; user-select: text; }
+.err-head { display: flex; align-items: center; gap: 8px; }
+.err-code { font-family: "Cascadia Code", Consolas, monospace; font-size: 14px; }
+.err-title { font-weight: 600; margin: 2px 0 4px; }
+.err-detail { font-family: "Cascadia Code", Consolas, monospace; font-size: 12px; color: var(--err); margin-bottom: 4px; word-break: break-word; }
+.err-label { margin-top: 6px; font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px; color: var(--fg-muted); font-weight: 600; }
+.err-spring { margin-top: 6px; font-size: 12px; }

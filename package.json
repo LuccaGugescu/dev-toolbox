@@ -7,7 +7,7 @@
   "author": "Lucca Gugescu",
   "scripts": {
     "start": "electron .",
-    "test": "node test/encoding.test.js",
+    "test": "node test/encoding.test.js && node test/db-tools.test.js",
     "icon": "python scripts/make-icon.py",
     "dist": "electron-builder --win nsis --x64 --publish never",
     "pack": "electron-builder --win dir --x64"

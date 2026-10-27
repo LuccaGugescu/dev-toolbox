@@ -112,6 +112,57 @@ app.on('browser-window-created', (_e, win) => {
       check('regex named groups', await run(`$vis().querySelector('.match-row .grp')?.textContent`), (await run(`$vis().querySelector('.match-row .grp')?.textContent`)) === '1 <user>: "alice.smith"');
       check('regex java', await run(`$vis().querySelectorAll('pre.code')[1].textContent`), (await run(`$vis().querySelectorAll('pre.code')[1].textContent`)).includes('Pattern.compile("(?<user>[\\\\w.]+)'));
       await shot('regex');
+
+      check('sidebar groups', await run(`[...document.querySelectorAll('#tool-list .group-label')].map((e) => e.textContent).join(',')`), (await run(`[...document.querySelectorAll('#tool-list .group-label')].map((e) => e.textContent).join(',')`)) === 'General,Database,Backend');
+
+      await run(`Toolbox.show('sql-format'); $editor().setValue('select a, b from t where x = ? and y = :name'); $type('textarea.code', '5\\nname=O\\'x'); true`);
+      await wait(600);
+      out = await run('$output()');
+      check('sql format + binds', out, out.startsWith('SELECT\n  a,\n  b\nFROM') && out.includes("x = 5") && out.includes("y = 'O''x'"));
+      await shot('sql-format');
+
+      await run(`Toolbox.show('explain'); $editor().setValue(${js(fs.readFileSync(path.join(samples, 'explain', 'postgres-analyze.txt'), 'utf8'))}); true`);
+      await wait(700);
+      check('explain findings', await run('$status()'), /PostgreSQL plan · \d+ nodes · [1-9]\d* problems/.test(await run('$status()')));
+      check('explain tree rows', await run(`$vis().querySelectorAll('.ex-row:not(.ex-head)').length`), (await run(`$vis().querySelectorAll('.ex-row:not(.ex-head)').length`)) >= 4);
+      await shot('explain');
+
+      await run(`Toolbox.show('sql-convert'); $editor().setValue('select NVL(a, 0), SYSDATE from orders where rownum <= 5'); true`);
+      await wait(600);
+      out = await run('$output()');
+      check('oracle -> pg', out, out === 'select COALESCE(a, 0), LOCALTIMESTAMP(0) from orders where rownum <= 5');
+      check('oracle -> pg warnings', await run(`$vis().querySelectorAll('.conv-warning').length`), (await run(`$vis().querySelectorAll('.conv-warning').length`)) === 1);
+      await shot('sql-convert');
+
+      await run(`Toolbox.show('data-sql'); $editor().setValue('id\\tname\\n1\\tAna\\n2\\tBo'); true`);
+      await wait(600);
+      out = await run('$output()');
+      check('data -> sql', out, out === "INSERT INTO my_table (id, name) VALUES\n  (1, 'Ana'),\n  (2, 'Bo');");
+      await shot('data-sql');
+
+      await run(`Toolbox.show('conn'); $type('input.code', 'jdbc:oracle:thin:@//ora.example.com:1521/ORCLPDB1'); true`);
+      await wait(500);
+      check('conn parse', await run('$status()'), (await run('$status()')).startsWith('✓ Parsed as Oracle'));
+      check('conn outputs', await run(`$vis().querySelector('.conn-item pre').textContent`), (await run(`$vis().querySelector('.conn-item pre').textContent`)) === 'jdbc:oracle:thin:@//ora.example.com:1521/ORCLPDB1');
+      await shot('conn');
+
+      await run(`Toolbox.show('db-errors'); $type('textarea', 'ERROR: duplicate key value violates unique constraint "users_email_key"'); true`);
+      await wait(500);
+      check('db error lookup', await run(`$vis().querySelector('.err-code')?.textContent`), (await run(`$vis().querySelector('.err-code')?.textContent`)) === '23505');
+      await shot('db-errors');
+
+      await run(`Toolbox.show('cron'); $type('input.code', '0 0/30 8-18 ? * MON-FRI'); true`);
+      await wait(400);
+      check('cron describe', await run(`$vis().querySelector('.cron-desc').textContent`), (await run(`$vis().querySelector('.cron-desc').textContent`)) === 'Every 30 minutes between 08:00 and 18:59, on Monday through Friday');
+      check('cron next runs', await run(`$vis().querySelectorAll('.cron-run').length`), (await run(`$vis().querySelectorAll('.cron-run').length`)) === 12);
+      await shot('cron');
+
+      await run(`Toolbox.show('ids'); true`);
+      await wait(300);
+      const firstId = await run(`$vis().querySelector('textarea').value.split('\\n')[0]`);
+      check('uuid v7 generated', firstId, /^[0-9a-f]{8}-[0-9a-f]{4}-7[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/.test(firstId));
+      check('uuid inspected', await run(`$vis().querySelector('.kv .v').textContent`), (await run(`$vis().querySelector('.kv .v').textContent`)).startsWith('7 '));
+      await shot('ids');
       console.log('[smoke] done');
     } catch (err) {
       console.error('[smoke] FAILED', err);
