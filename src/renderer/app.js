@@ -1,7 +1,8 @@
 'use strict';
 
 // Tool registry + shared helpers. A tool is:
-//   Toolbox.register({ id, name, icon /* inline SVG string */, mount(container, monaco), onShow?() })
+//   Toolbox.register({ id, name, icon /* inline SVG string */, group?, mount(container, monaco), onShow?() })
+// group is the sidebar heading ("General" when omitted); tools appear in registration order.
 // mount() runs lazily the first time the tool is opened.
 window.Toolbox = (() => {
   const tools = [];
@@ -23,7 +24,15 @@ window.Toolbox = (() => {
     });
 
     const list = document.getElementById('tool-list');
+    let group = null;
     for (const tool of tools) {
+      if ((tool.group || 'General') !== group) {
+        group = tool.group || 'General';
+        const heading = document.createElement('li');
+        heading.className = 'group-label';
+        heading.textContent = group;
+        list.append(heading);
+      }
       const li = document.createElement('li');
       const btn = document.createElement('button');
       btn.dataset.tool = tool.id;

@@ -18,6 +18,16 @@
 
   <script src="../../node_modules/monaco-editor/min/vs/loader.js"></script>
   <script src="app.js"></script>
+  <!-- Pure engines shared by tools (also loaded by the Node tests). -->
+  <script src="lib/sql-lexer.js"></script>
+  <script src="lib/sql-format.js"></script>
+  <script src="lib/sql-convert.js"></script>
+  <script src="lib/explain.js"></script>
+  <script src="lib/data-sql.js"></script>
+  <script src="lib/conn.js"></script>
+  <script src="lib/db-errors.js"></script>
+  <script src="lib/cron.js"></script>
+  <script src="lib/ids.js"></script>
   <!-- Tools: each file calls Toolbox.register({...}). Add new tools here. -->
   <script src="tools/diff.js"></script>
   <script src="tools/encoding.js"></script>
@@ -27,6 +37,14 @@
   <script src="tools/hash.js"></script>
   <script src="tools/time.js"></script>
   <script src="tools/regex.js"></script>
+  <script src="tools/sql-format.js"></script>
+  <script src="tools/explain.js"></script>
+  <script src="tools/sql-convert.js"></script>
+  <script src="tools/data-sql.js"></script>
+  <script src="tools/conn.js"></script>
+  <script src="tools/db-errors.js"></script>
+  <script src="tools/cron.js"></script>
+  <script src="tools/ids.js"></script>
   <script src="boot.js"></script>
 </body>
 </html>

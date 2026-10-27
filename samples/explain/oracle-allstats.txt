@@ -1,0 +1,22 @@
+Plan hash value: 1234567
+
+-------------------------------------------------------------------------------------------
+| Id  | Operation                    | Name        | Starts | E-Rows | A-Rows |   A-Time   | Buffers |
+-------------------------------------------------------------------------------------------
+|   0 | SELECT STATEMENT             |             |      1 |        |    120K|00:00:02.10 |   45000 |
+|*  1 |  HASH JOIN                   |             |      1 |    100 |    120K|00:00:02.10 |   45000 |
+|   2 |   TABLE ACCESS BY INDEX ROWID| CUSTOMERS   |      1 |     50 |     50 |00:00:00.01 |       5 |
+|*  3 |    INDEX RANGE SCAN          | CUST_IDX    |      1 |     50 |     50 |00:00:00.01 |       2 |
+|*  4 |   TABLE ACCESS FULL          | ORDERS      |      1 |   1000 |    500K|00:00:01.90 |   44995 |
+-------------------------------------------------------------------------------------------
+
+Predicate Information (identified by operation id):
+---------------------------------------------------
+
+   1 - access("O"."CUSTOMER_ID"="C"."ID")
+   3 - access("C"."REGION"='EU')
+   4 - filter("O"."STATUS"='NEW')
+
+Note
+-----
+   - dynamic statistics used: dynamic sampling (level=2)
